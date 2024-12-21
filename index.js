@@ -17,7 +17,7 @@ if (!process.env.STRIPE_SECRET_KEY) {
 const stripeInstance = stripe(process.env.STRIPE_SECRET_KEY);
 
 const app = express();
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 8080;
 
 // Middleware
 app.use(cors({ origin: "https://airosofts.com" })); // Restrict to your domain
