@@ -146,7 +146,7 @@
             async function fetchUserDetails() {
               try {
                 const response = await fetch(
-                  "https://app.airosofts.com/api/user-details",
+                  "http://localhost:4000/api/user-details",
                   {
                     headers: {
                       "Content-Type": "application/json",
@@ -626,35 +626,35 @@ function copyToClipboard(value) {
     </script>
     
     
-       <script>
-  async function managesubscription() {
-    try {
-      const response = await fetch(`https://app.airosofts.com/customers`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json(); // Parse JSON response
-        const redirectUrl = data.url; // Get the Stripe portal URL
-        if (redirectUrl) {
-          window.location.href = redirectUrl; // Redirect to Stripe portal
-        } else {
-          alert("Error: URL is missing in the response.");
+    <script>
+      async function managesubscription() {
+        try {
+          const response = await fetch(`http://localhost:4000/customers`, {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+            },
+          });
+    
+          if (response.ok) {
+            const data = await response.json(); // Parse JSON response
+            const redirectUrl = data.url; // Get the Stripe portal URL
+            if (redirectUrl) {
+              window.location.href = redirectUrl; // Redirect to Stripe portal
+            } else {
+              alert("Error: URL is missing in the response.");
+            }
+          } else {
+            const errorData = await response.json();
+            alert(`Error: ${errorData.error || "Unable to manage subscription."}`);
+          }
+        } catch (error) {
+          console.error("Error handling Manage Subscription:", error);
+          alert("An unexpected error occurred.");
         }
-      } else {
-        const errorData = await response.json();
-        alert(`Error: ${errorData.error || "Unable to manage subscription."}`);
       }
-    } catch (error) {
-      console.error("Error handling Manage Subscription:", error);
-      alert("An unexpected error occurred.");
-    }
-  }
-</script>
-
+    </script>
+    
           <style>
             .loader {
               border-width: 4px;
@@ -756,7 +756,7 @@ function copyToClipboard(value) {
               }
 
               // Call API
-              fetch("https://app.airosofts.com/api/change-password", {
+              fetch("http://localhost:4000/api/change-password", {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
@@ -780,7 +780,7 @@ function copyToClipboard(value) {
                     );
 
                     setTimeout(() => {
-                      window.location.href = "https://app.airosofts.com/login.html";
+                      window.location.href = "http://localhost:4000/login.html";
                     }, 3000);
                   }
                 })
@@ -922,7 +922,7 @@ function copyToClipboard(value) {
   const token = sessionStorage.getItem("authToken");
 if (!token) {
   console.error("Token not found in sessionStorage");
-  window.location.href = "https://app.airosofts.com/login.html"; // Redirect to login
+  window.location.href = "http://localhost:4000/login.html"; // Redirect to login
 }
 
   try {
@@ -947,6 +947,6 @@ if (!token) {
     localStorage.removeItem("isLoggedIn");
 
     // Redirect to login page
-    window.location.href = "https://app.airosofts.com/login.html";
+    window.location.href = "http://localhost:4000/login.html";
   }
 </script>
