@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Responsive Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+  </head>
+  <body class="bg-gray-50 h-screen">
+    <!-- Mobile Header -->
+    <header
+      class="bg-gray-900 text-white fixed top-0 left-0 w-full flex items-center justify-between px-4 py-3 md:hidden z-50"
+    >
+      <button id="hamburger" class="text-white p-2">
+        <i class="fas fa-bars text-2xl"></i>
+      </button>
+      <h1 class="text-xl font-bold">My Dashboard</h1>
+      <div></div>
+      <style>
+        .loader {
+          border-width: 4px;
+          border-right-color: transparent;
+          border-top-color: #d74b3f; /* Spinner color */
+          border-left-color: #d74b3f; /* Spinner color */
+          border-bottom-color: #d74b3f; /* Spinner color */
+        }
+      </style>
+    </header>
+
+    <!-- Main Dashboard Wrapper -->
+    <div class="flex h-full pt-16 md:pt-0">
+      <!-- Sidebar -->
+      <aside
+        id="sidebar"
+        class="bg-gray-900 text-white w-64 flex flex-col space-y-6 p-4 overflow-y-auto fixed top-0 left-0 h-full md:relative md:block hidden z-40"
+      >
+        <div
+          class="text-center text-2xl font-bold border-b border-gray-700 pb-4"
+        >
+          <!-- Centered and resized logo -->
+          <div style="text-align: center; margin: 0 auto">
+            <img
+              style="width: 150px; display: block; margin: 0 auto"
+              src="airosofts png logo white font magnified version.png"
+              alt="AiroSofts Logo"
+            />
+          </div>
+        </div>
+        <nav class="flex-1 space-y-4">
+          <a
+            href="#home"
+            class="block py-3 px-4 rounded-md bg-gray-800 hover:bg-gray-700 transition"
+          >
+            <i class="fas fa-home mr-3"></i> Home
+          </a>
+          <a
+            href="#softwares"
+            onclick="showSoftwaresSection()"
+            class="block py-3 px-4 rounded-md hover:bg-gray-700 transition"
+          >
+            <i class="fas fa-laptop mr-3"></i> Softwares
+          </a>
+          <a
+            href="#subscriptions"
+            class="block py-3 px-4 rounded-md hover:bg-gray-700 transition"
+          >
+            <i class="fas fa-credit-card mr-3"></i> Subscriptions
+          </a>
+          <a
+            href="#tutorials"
+            class="block py-3 px-4 rounded-md hover:bg-gray-700 transition"
+          >
+            <i class="fas fa-chalkboard-teacher mr-3"></i> Tutorials
+          </a>
+          <a
+            href="#settings"
+            class="block py-3 px-4 rounded-md hover:bg-gray-700 transition"
+          >
+            <i class="fas fa-cog mr-3"></i> Settings
+          </a>
+        </nav>
+      </aside>
+
+      <!-- Content Area -->
+      <div class="flex-1 flex flex-col">
+        <!-- Top Bar -->
+        <header
+          class="bg-white shadow p-4 flex justify-between items-center md:px-8 hidden md:flex"
+        >
+          <h1 class="text-xl font-semibold text-gray-800">Welcome, User!</h1>
+          <button
+            class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition"
+          >
+            <i class="fas fa-sign-out-alt"></i> Log Out
+          </button>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto p-6 space-y-8">
+          <!-- Home Section -->
+          <section id="home">
+            <div class="grid gap-6 md:grid-cols-2">
+              <!-- User Details Card -->
+              <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">
+                  User Details
+                </h2>
+                <ul class="space-y-2 text-gray-700">
+                  <li>
+                    <strong>Name:</strong>
+                    <span id="user-name">Loading...</span>
+                  </li>
+                  <li>
+                    <strong>Email:</strong>
+                    <span id="user-email">Loading...</span>
+                  </li>
+                  <li>
+                    <strong>Phone:</strong>
+                    <span id="user-phone">Loading...</span>
+                  </li>
+                  <li>
+                    <strong>Address:</strong>
+                    <span id="user-address">Loading...</span>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Banner with Time Counter -->
+              <div
+                class="bg-blue-500 text-white rounded-lg shadow-lg p-6 flex flex-col items-center justify-center"
+              >
+                <h2 class="text-xl font-semibold">Current Time</h2>
+                <p id="current-time" class="text-3xl font-mono mt-4"></p>
+              </div>
+            </div>
+          </section>
+
+          <script>
+            // Fetch user details from the API
+            async function fetchUserDetails() {
+              try {
+                const response = await fetch(
+                  "https://app.airosofts.com/api/user-details",
+                  {
+                    headers: {
+                      "Content-Type": "application/json",
+                      Authorization: `Bearer ${sessionStorage.getItem(
+                        "authToken"
+                      )}`,
+                    },
+                  }
+                );
+
+                if (!response.ok) {
+                  throw new Error("Failed to fetch user details");
+                }
+
+                const userDetails = await response.json();
+
+                // Update the UI with user details
+                document.getElementById("user-name").textContent =
+                  userDetails.name || "N/A";
+                document.getElementById("user-email").textContent =
+                  userDetails.email || "N/A";
+                document.getElementById("user-phone").textContent =
+                  userDetails.phone || "N/A";
+                document.getElementById("user-address").textContent =
+                  userDetails.address || "N/A";
+              } catch (error) {
+                console.error("Error fetching user details:", error);
+              }
+            }
+
+            // Fetch and display the current time
+            function updateTime() {
+              const now = new Date();
+              document.getElementById("current-time").textContent =
+                now.toLocaleTimeString();
+            }
+
+            // Initialize
+            fetchUserDetails();
+          </script>
+
+          <!-- Software Section -->
+          <!-- Softwares Navigation Link -->
+          <section id="softwares" class="relative bg-gray-50 py-10">
+            <div class="max-w-5xl mx-auto px-4 lg:px-6">
+              <h2 class="text-4xl font-bold text-gray-900 text-center mb-10">
+                Available Softwares
+              </h2>
+          
+              <!-- Spinner Centered Inside the Section -->
+              <div id="spinner-overlay" class="absolute inset-0 bg-gray-50 bg-opacity-75 hidden z-50"></div>
+              <div id="spinner" class="absolute inset-0 flex items-center justify-center hidden z-50">
+                <div class="loader border-t-4 border-[#D74B3F] w-14 h-14 rounded-full animate-spin"></div>
+              </div>
+          
+              <!-- Software Cards -->
+              <div id="softwares-list" class="space-y-8">
+                <!-- Dynamic software cards will be inserted here -->
+              </div>
+            </div>
+          </section>
+          
+          <style>
+            /* Loader */
+            .loader {
+              border-width: 4px;
+              border-right-color: transparent;
+            }
+          
+            #spinner-overlay {
+              background-color: rgba(255, 255, 255, 0.75);
+            }
+          
+            /* Card Styling */
+            .card {
+              background: #fff;
+              border-radius: 12px;
+              box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+              transition: transform 0.2s ease, box-shadow 0.2s ease;
+              padding: 20px;
+              overflow: hidden;
+              display: flex;
+              flex-direction: column;
+              gap: 16px;
+            }
+          
+            .card:hover {
+              transform: translateY(-4px);
+              box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+            }
+          
+            /* Card Header */
+            .card-header {
+              display: flex;
+              align-items: center;
+              gap: 20px;
+            }
+          
+            .card-header img {
+              width: 64px;
+              height: 64px;
+              border-radius: 10px;
+              object-fit: cover;
+            }
+          
+            .card-header h3 {
+              font-size: 20px;
+              font-weight: 700;
+              color: #D74B3F;
+            }
+          
+            .card-header p {
+              font-size: 14px;
+              color: #6b7280;
+              margin-top: 4px;
+            }
+          
+            /* Button Styling */
+            .button {
+              padding: 12px 16px;
+              background-color: #D74B3F;
+              color: white;
+              font-weight: 600;
+              font-size: 14px;
+              border-radius: 8px;
+              text-align: center;
+              text-decoration: none;
+              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+              transition: background-color 0.2s ease, box-shadow 0.2s ease;
+            }
+          
+            .button:hover {
+              background-color: #b84233;
+              box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            }
+          
+            /* Input and Copy Button Row */
+            .input-row {
+              display: flex;
+              align-items: center;
+              gap: 10px;
+            }
+          
+            .input {
+              padding: 10px;
+              border: 1px solid #d1d5db;
+              border-radius: 8px;
+              font-size: 14px;
+              color: #374151;
+              background-color: #f9fafb;
+              flex-grow: 1;
+            }
+          
+            .input:focus {
+              border-color: #D74B3F;
+              outline: none;
+            }
+          
+            .copy-button {
+              padding: 10px 12px;
+              background-color: #D74B3F;
+              color: white;
+              font-size: 14px;
+              font-weight: bold;
+              border-radius: 8px;
+              cursor: pointer;
+              transition: background-color 0.2s ease;
+            }
+          
+            .copy-button:hover {
+              background-color: #b84233;
+            }
+          
+            /* Accordion Styling */
+            .accordion-item {
+              background: #f9fafb;
+              border: 1px solid #e5e7eb;
+              border-radius: 8px;
+              overflow: hidden;
+            }
+          
+            .accordion-header {
+              padding: 12px 16px;
+              font-size: 16px;
+              font-weight: 600;
+              color: #374151;
+              cursor: pointer;
+              background-color: #f4f5f7;
+              border-bottom: 1px solid #e5e7eb;
+            }
+          
+            .accordion-body {
+              display: none;
+              padding: 16px;
+              background-color: white;
+            }
+          
+            .accordion-body.open {
+              display: block;
+            }
+          </style>
+          
+          <!-- Spinner Style -->
+          <style>
+            .loader {
+              border-width: 4px;
+              border-right-color: transparent;
+            }
+          </style>
+
+          <script>
+        async function fetchAvailableSoftwares() {
+  const spinner = document.getElementById("spinner");
+  const spinnerOverlay = document.getElementById("spinner-overlay");
+  const softwareList = document.getElementById("softwares-list");
+
+  try {
+    // Show the spinner and overlay
+    spinner.classList.remove("hidden");
+    spinnerOverlay.classList.remove("hidden");
+
+    // Clear the current content
+    softwareList.innerHTML = "";
+
+    // Fetch data from the API
+    const response = await fetch("/api/available-softwares", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch available software");
+    }
+
+    const data = await response.json();
+
+    // Populate the software list
+    data.forEach(({ software, licenses, email }) => {
+      if (!software || !licenses.length) return; // Skip if data is incomplete
+
+      const softwareCard = document.createElement("div");
+      softwareCard.classList.add("card");
+
+      softwareCard.innerHTML = `
+        <!-- Software Header -->
+        <div class="card-header">
+          <img src="${software["software icon"]}" alt="Software Logo">
+          <div>
+            <h3>${software["software name"]}</h3>
+            <p>${software["software description"]}</p>
+          </div>
+        </div>
+
+        <!-- Download Button -->
+        <a href="${software["software drive link"]}" target="_blank" class="button">
+          Download Software
+        </a>
+
+        <!-- Email Section -->
+        <div>
+          <h4 class="text-md font-bold text-gray-900 mb-2">User Email</h4>
+          <div class="input-row">
+            <input type="text" value="${email}" readonly class="input">
+            <button onclick="copyToClipboard('${email}')" class="copy-button">
+              Copy Email
+            </button>
+          </div>
+        </div>
+
+        <!-- Licenses Accordion -->
+        <div class="accordion mt-4">
+          ${licenses
+            .map(
+              (license, index) => `
+            <div class="accordion-item">
+              <div class="accordion-header" onclick="toggleAccordion(this)">
+                License ${index + 1}
+              </div>
+              <div class="accordion-body">
+                <div class="input-row">
+                  <input type="text" value="${license.license_key}" readonly class="input">
+                  <button onclick="copyToClipboard('${license.license_key}')" class="copy-button">
+                    Copy Key
+                  </button>
+                </div>
+                <p class="text-sm text-gray-600 mt-2">Registration Date: <span class="font-medium">${new Date(
+                  license.registration_date
+                ).toLocaleDateString()}</span></p>
+                <p class="text-sm text-gray-600">Expiry Date: <span class="font-medium">${new Date(
+                  license.expiry_date
+                ).toLocaleDateString()}</span></p>
+                <p class="text-sm text-gray-600">Status: <span class="font-medium">${license.status || "N/A"}</span></p>
+              </div>
+            </div>
+          `
+            )
+            .join("")}
+        </div>
+      `;
+
+      softwareList.appendChild(softwareCard);
+    });
+  } catch (error) {
+    console.error("Error fetching available software:", error);
+  } finally {
+    // Hide the spinner and overlay
+    spinner.classList.add("hidden");
+    spinnerOverlay.classList.add("hidden");
+  }
+}
+
+// Accordion toggle function
+function toggleAccordion(element) {
+  const body = element.nextElementSibling;
+  body.classList.toggle("open");
+}
+
+// Copy to Clipboard Function
+function copyToClipboard(value) {
+  navigator.clipboard.writeText(value).then(
+    () => alert("Copied to clipboard"),
+    () => alert("Failed to copy")
+  );
+}
+
+            // Copy to clipboard functionality
+            function copyToClipboard(value) {
+              navigator.clipboard.writeText(value).then(
+                () => alert("Copied to clipboard"),
+                (err) => alert("Failed to copy: ", err)
+              );
+            }
+
+            // Ensure the section doesn't show on home page
+            document.addEventListener("DOMContentLoaded", () => {
+              document.getElementById("softwares").classList.add("hidden");
+            });
+
+            // Example trigger to show this section
+            function showSoftwaresSection() {
+              document
+                .querySelectorAll("section")
+                .forEach((section) => section.classList.add("hidden")); // Hide all other sections
+              document.getElementById("softwares").classList.remove("hidden");
+              fetchAvailableSoftwares(); // Fetch and display software data
+            }
+          </script>
+
+    <!-- Subscriptions Section -->
+    <section id="subscriptions" class="hidden relative">
+      <!-- Spinner -->
+      <div id="subscriptions-spinner" class="hidden absolute inset-0 bg-gray-100 bg-opacity-50 flex items-center justify-center">
+        <div class="loader">Loading...</div>
+      </div>
+    
+      <div class="bg-white rounded-lg shadow-lg p-6 space-y-6">
+        <!-- Manage Subscription Button -->
+        <button
+          onclick="managesubscription()"
+          id="manage-subscription-btn"
+          class="mb-4 bg-[#D74B3F] text-white px-4 py-2 rounded-md hover:bg-red-600 transition"
+        >
+          Manage Subscription
+        </button>
+    
+        <!-- Subscriptions Heading -->
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">
+          Active Subscriptions
+        </h2>
+    
+        <!-- Subscription Details -->
+        <div id="subscriptions-list" class="space-y-6"></div>
+    
+        <!-- Tutorials and Support -->
+        <div class="p-4 bg-gray-100 rounded-md shadow-md">
+          <h3 class="text-lg font-bold text-gray-700 mb-2">Helpful Resources</h3>
+          <ul class="space-y-2">
+            <li>
+              <a href="#" class="text-blue-500 hover:underline">
+                How to use Airo Google Maps Data Extractor
+              </a>
+            </li>
+            <li>
+              <a href="#" class="text-blue-500 hover:underline">
+                Common FAQs
+              </a>
+            </li>
+            <li>
+              <a href="#" class="text-blue-500 hover:underline">
+                Contact Customer Support
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+    
+    <script>
+      async function fetchUserSubscriptions() {
+        const spinner = document.getElementById("subscriptions-spinner");
+        const subscriptionList = document.getElementById("subscriptions-list");
+    
+        try {
+          // Show the spinner
+          spinner.classList.remove("hidden");
+    
+          // Fetch subscription data
+          const response = await fetch("/api/user-subscriptions", {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+            },
+          });
+    
+          if (!response.ok) {
+            throw new Error("Failed to fetch subscriptions");
+          }
+    
+          const subscriptions = await response.json();
+    
+          // Clear existing content
+          subscriptionList.innerHTML = "";
+    
+          // Render subscriptions dynamically
+          subscriptions.forEach((subscription) => {
+            const subscriptionItem = document.createElement("div");
+            subscriptionItem.classList.add("p-4", "bg-gray-100", "rounded-md", "shadow-md");
+    
+            subscriptionItem.innerHTML = `
+              <div class="flex justify-between items-center mb-2">
+                <div>
+                  <h3 class="text-lg font-semibold text-gray-700">${subscription.name}</h3>
+                  <p class="text-sm text-gray-600">Plan: ${subscription.plan}</p>
+                </div>
+                <img src="${subscription.logo}" alt="${subscription.name} Logo" class="w-12 h-12">
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <p class="text-sm text-gray-500">Start Date:</p>
+                  <p class="font-medium text-gray-700">${new Date(subscription.start_date).toLocaleDateString()}</p>
+                </div>
+                <div>
+                  <p class="text-sm text-gray-500">Next Billing:</p>
+                  <p class="font-medium text-gray-700">${new Date(subscription.next_billing_date).toLocaleDateString()}</p>
+                </div>
+                <div>
+                  <p class="text-sm text-gray-500">Status:</p>
+                  <p class="font-medium text-green-600">${subscription.status}</p>
+                </div>
+                <div>
+                  <p class="text-sm text-gray-500">Auto-renewal:</p>
+                  <p class="font-medium text-gray-700">${subscription.auto_renewal ? "Enabled" : "Disabled"}</p>
+                </div>
+              </div>
+              <div class="mt-4">
+                <p class="text-sm text-gray-500">Usage:</p>
+                <div class="relative h-2 w-full bg-gray-300 rounded-md overflow-hidden">
+                  <div class="h-full bg-[#D74B3F]" style="width: ${((subscription.limit_used / subscription.limit) * 100).toFixed(2)}%"></div>
+                </div>
+                <p class="text-sm text-gray-500 mt-1">${subscription.limit_used} / ${subscription.limit} credits used</p>
+              </div>
+            `;
+    
+            subscriptionList.appendChild(subscriptionItem);
+          });
+        } catch (error) {
+          console.error("Error fetching subscriptions:", error);
+        } finally {
+          // Hide the spinner
+          spinner.classList.add("hidden");
+        }
+      }
+    
+      fetchUserSubscriptions();
+    </script>
+    
+    
+       <script>
+  async function managesubscription() {
+    try {
+      const response = await fetch(`https://app.airosofts.com/customers`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json(); // Parse JSON response
+        const redirectUrl = data.url; // Get the Stripe portal URL
+        if (redirectUrl) {
+          window.location.href = redirectUrl; // Redirect to Stripe portal
+        } else {
+          alert("Error: URL is missing in the response.");
+        }
+      } else {
+        const errorData = await response.json();
+        alert(`Error: ${errorData.error || "Unable to manage subscription."}`);
+      }
+    } catch (error) {
+      console.error("Error handling Manage Subscription:", error);
+      alert("An unexpected error occurred.");
+    }
+  }
+</script>
+
+          <style>
+            .loader {
+              border-width: 4px;
+              border-right-color: transparent;
+              border-top-color: #d74b3f;
+              border-left-color: #d74b3f;
+              border-bottom-color: #d74b3f;
+            }
+          </style>
+
+          <!-- Tutorials Section -->
+          <section id="tutorials" class="hidden">
+            <div class="bg-white rounded-lg shadow-lg p-6">
+              <h2 class="text-2xl font-bold text-gray-800 mb-4">
+                Software Tutorials
+              </h2>
+              <div class="grid gap-6">
+                <div class="bg-gray-100 rounded-lg p-4 flex items-center">
+                  <img
+                    src="https://via.placeholder.com/50"
+                    alt="Software Logo"
+                    class="mr-4"
+                  />
+                  <div>
+                    <h3 class="font-semibold text-gray-800">Software 1</h3>
+                    <p class="text-sm text-gray-600">
+                      Tutorial description goes here
+                    </p>
+                    <a href="#" class="text-blue-500 hover:underline"
+                      >Watch Video Tutorial</a
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Settings Section -->
+          <section id="settings" class="hidden">
+            <div class="bg-white rounded-lg shadow-lg p-6">
+              <h2 class="text-2xl font-bold text-gray-800 mb-4">
+                Change Password
+              </h2>
+              <form>
+                <div class="space-y-4">
+                  <input
+                    type="password"
+                    placeholder="Current Password"
+                    class="w-full p-3 border rounded-md"
+                  />
+                  <input
+                    type="password"
+                    placeholder="New Password"
+                    class="w-full p-3 border rounded-md"
+                  />
+                  <input
+                    type="password"
+                    placeholder="Retype New Password"
+                    class="w-full p-3 border rounded-md"
+                  />
+                  <button
+                    type="submit"
+                    class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
+                    onclick="changePassword(event)"
+                  >
+                    Change Password
+                  </button>
+                </div>
+              </form>
+            </div>
+          </section>
+
+          <script>
+            // HTML Button onClick handler
+            function changePassword(event) {
+              event.preventDefault();
+              const currentPassword = document.querySelector(
+                'input[placeholder="Current Password"]'
+              ).value;
+              const newPassword = document.querySelector(
+                'input[placeholder="New Password"]'
+              ).value;
+              const confirmNewPassword = document.querySelector(
+                'input[placeholder="Retype New Password"]'
+              ).value;
+
+              // Validate inputs
+              if (!currentPassword || !newPassword || !confirmNewPassword) {
+                showPopup("All fields are required!", true);
+                return;
+              }
+
+              if (newPassword !== confirmNewPassword) {
+                showPopup(
+                  "New Password and Retype New Password do not match!",
+                  true
+                );
+                return;
+              }
+
+              // Call API
+              fetch("https://app.airosofts.com/api/change-password", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${sessionStorage.getItem(
+                    "authToken"
+                  )}`,
+                },
+                body: JSON.stringify({ currentPassword, newPassword }),
+              })
+                .then((response) => response.json())
+                .then((data) => {
+                  if (data.error) {
+                    showPopup(data.error, true);
+                  } else {
+                    // Password changed successfully
+                    localStorage.removeItem("isLoggedIn");
+                    sessionStorage.removeItem("authToken");
+                    showPopup(
+                      "Password changed successfully! Redirecting to login...",
+                      false
+                    );
+
+                    setTimeout(() => {
+                      window.location.href = "https://app.airosofts.com/login.html";
+                    }, 3000);
+                  }
+                })
+                .catch((error) => {
+                  showPopup("An error occurred. Please try again later.", true);
+                  console.error(error);
+                });
+            }
+            function showPopup(message, isError) {
+              const popup = document.createElement("div");
+              popup.classList.add("popup", isError ? "error" : "success");
+              popup.innerHTML = `
+    <div class="popup-content">
+      <span class="close" onclick="this.parentElement.parentElement.remove();">&times;</span>
+      <p>${message}</p>
+    </div>
+  `;
+
+              document.body.appendChild(popup);
+
+              setTimeout(() => {
+                if (popup.parentElement) popup.remove();
+              }, 3000);
+            }
+
+            // Corrected CSS for top-right notification
+            const style = document.createElement("style");
+            style.innerHTML = `
+  .popup {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #fff;
+    border: 2px solid #f0f0f0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    padding: 20px;
+    max-width: 350px;
+    width: 90%;
+    text-align: left;
+    border-radius: 8px;
+    opacity: 0;
+    animation: fadeIn 0.5s forwards, fadeOut 0.5s 4.5s forwards;
+    position: fixed; /* Ensure it stays fixed at top-right */
+  }
+  .popup.success { border-color: #4CAF50; background: #e8f5e9; }
+  .popup.error { border-color: #f44336; background: #ffebee; }
+  .popup-content { font-family: Arial, sans-serif; color: #333; }
+  .popup-content .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    background: #f0f0f0;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease-in-out;
+    border: none;
+  }
+  .popup-content .close:hover {
+    background: #ddd;
+    color: #000;
+  }
+  .popup-content p {
+    margin: 10px 0 0; /* Extra margin to prevent overlap with the close icon */
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+`;
+            document.head.appendChild(style);
+          </script>
+        </main>
+      </div>
+    </div>
+
+    <script>
+      // Update the current time
+      function updateTime() {
+        const timeEl = document.getElementById("current-time");
+        const now = new Date();
+        timeEl.textContent = now.toLocaleTimeString();
+      }
+      setInterval(updateTime, 1000);
+      updateTime();
+
+      // Navigation Logic
+      document.querySelectorAll("aside a").forEach((link) => {
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+
+          // Hide all sections
+          document
+            .querySelectorAll("main section")
+            .forEach((section) => section.classList.add("hidden"));
+
+          // Get the target section
+          const target = document.querySelector(link.getAttribute("href"));
+
+          // Show the target section
+          if (target) target.classList.remove("hidden");
+
+          // Remove active class from all links
+          document
+            .querySelectorAll("aside a")
+            .forEach((navLink) => navLink.classList.remove("bg-gray-800"));
+
+          // Add active class to the clicked link
+          link.classList.add("bg-gray-800");
+        });
+      });
+
+      // Mobile Sidebar Toggle
+      const hamburger = document.getElementById("hamburger");
+      const sidebar = document.getElementById("sidebar");
+
+      hamburger.addEventListener("click", () => {
+        sidebar.classList.toggle("hidden");
+      });
+    </script>
+  </body>
+</html>
+<script>
+  // Get the token from sessionStorage
+  const token = sessionStorage.getItem("authToken");
+if (!token) {
+  console.error("Token not found in sessionStorage");
+  window.location.href = "https://app.airosofts.com/login.html"; // Redirect to login
+}
+
+  try {
+    const decodedToken = jwt_decode(token);
+
+    // Check if the token is expired
+    const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
+    if (decodedToken.exp < currentTime) {
+      throw new Error("Token expired");
+    }
+
+    // Extract the email
+    const userEmail = decodedToken.email;
+
+    // Display the email or use it as needed
+    document.getElementById("user-email").textContent = userEmail;
+  } catch (error) {
+    console.error("Invalid or expired token:", error);
+
+    // Clear session and local storage
+    sessionStorage.removeItem("authToken");
+    localStorage.removeItem("isLoggedIn");
+
+    // Redirect to login page
+    window.location.href = "https://app.airosofts.com/login.html";
+  }
+</script>

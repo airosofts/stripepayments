@@ -1,0 +1,26 @@
+
+      Subscription Successful
+      Customer Details:
+      Name: Shinta Kapustin
+      Email: apksnetwork@gmail.com
+      Phone: N/A
+      Product Details:
+      Product ID: prod_RRLKtpmbRAAkqZ
+      Subscription ID: sub_1QZJ8EG8ztKaoxw1o6YKOqGH
+    
+      Subscription Successful
+      Customer Details:
+      Name: Shinta Kapustin
+      Email: l217745@lhr.nu.edu.pk
+      Phone: N/A
+      
+      Product Details:
+      Name: Airo Gmap Scraper
+      Description: Airo Gmap Scraper
+      Price: 20 USD
+
+      Subscription Details:
+      Status: active
+      Start Date: 12/24/2024, 2:29:22 AM
+      Current Period End: 1/24/2025, 2:29:22 AM
+    
