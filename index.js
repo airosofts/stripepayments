@@ -9,7 +9,6 @@ const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
-// Initialize Supabase client
 
 // Load environment variables
 dotenv.config(); // Ensure dotenv loads before accessing environment variables
@@ -101,13 +100,20 @@ async function sendProfessionalEmail(email, password) {
 }
 
 const plans = {
-  prod1_basic: "price_1QbWMxG8ztKaoxw1xzE9ziiE",
-  prod1_pro: "price_1QbWNMG8ztKaoxw1vQpSMZqY",
-  prod1_professional: "price_1QbWNmG8ztKaoxw1Z19xCzdH",
-  prod2_basic: "price_1QboJ3G8ztKaoxw1mNpNfjCe",
-  prod2_pro: "price_1QboJ3G8ztKaoxw1bbYC0GuI",
-  prod2_professional: "price_1QboJ3G8ztKaoxw15oEULSBc",
+  prod1_basic: "price_1QhnGOG8ztKaoxw1rgsjb1Bu",
+  prod1_expert: "price_1QbWIuG8ztKaoxw1YtAnMOdj",
+  prod1_professional: "price_1QbWIuG8ztKaoxw1ypp0JJwa",
+  prod1_basicasia:"price_1QhnNvG8ztKaoxw103Ea3buu",
+  prod1_expertasia:"price_1QhnODG8ztKaoxw1zKJrgyqb",
+  prod1_professionalasia:"price_1QhnOdG8ztKaoxw1YsjNWwfy",
+  prod2_basic: "price_1QhnIEG8ztKaoxw1o9W4qocQ",
+  prod2_expert: "price_1Qc7BzG8ztKaoxw1uggFgeaN",
+  prod2_professional: "price_1Qc7BzG8ztKaoxw101cg7lwY",
+  prod2_basicasia:"price_1QhnVRG8ztKaoxw15QRABeyA",
+  prod2_expertasia:"price_1QhnVlG8ztKaoxw1TCd8bCjG",
+  prod2_professionalasia:"price_1QhnWBG8ztKaoxw1HgjQG6EO"
 };
+
 
 
 app.get("/subscribe", async (req, res) => {
