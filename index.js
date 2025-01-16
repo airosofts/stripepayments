@@ -28,13 +28,9 @@ if (!process.env.STRIPE_SECRET_KEY) {
 const stripeInstance = stripe(process.env.STRIPE_SECRET_KEY);
 
 const app = express();
-<<<<<<< HEAD
 const port = process.env.PORT || 8080;
 
-=======
-const port = process.env.PORT || 4000;
 app.use(cors());
->>>>>>> 5e6b349 (Your update message here)
 // Middleware
 // app.use(cors({ origin: "https://airosofts.com" })); // Restrict to your domain
 app.use(express.static(path.join(__dirname))); // Serve static files
